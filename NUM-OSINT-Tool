@@ -1,0 +1,213 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# ===================================================================
+# 🔥 CYBER WITH RANJAN - ULTIMATE OSINT FRAMEWORK v10.0
+# 🌍 Enterprise Grade | Zero-Config | Error-Proof | English UI
+# ===================================================================
+
+import requests
+import json
+import sys
+import os
+import time
+from datetime import datetime
+
+# ---------- GLOBAL COLOR SCHEME (Premium Matrix Style) ----------
+R = '\033[91m'; G = '\033[92m'; Y = '\033[93m'; B = '\033[94m'
+C = '\033[96m'; M = '\033[95m'; W = '\033[0m'; BL = '\033[1m'
+D = '\033[2m'; BG = '\033[40m'
+
+# ---------- HARDCODED API CONFIGURATIONS (Auto-Inject Keys) ----------
+API_CONFIG = {
+    "aadhaar": {
+        "url": "https://movements-invoice-amanda-victoria.trycloudflare.com/search/aadhar",
+        "params": {"key": "mysecretkey123"},
+        "id_key": "aadhar"
+    },
+    "mobile": {
+        "url": "https://movements-invoice-amanda-victoria.trycloudflare.com/search/number",
+        "params": {"key": "mysecretkey123"},
+        "id_key": "mobile"
+    },
+    "vehicle": {
+        "url": "https://nitin-api-free-user-1k-spacial.vercel.app/api",
+        "params": {"type": "vehicle"},
+        "id_key": "search"
+    }
+}
+
+# ---------- MASSIVE PREMIUM BANNER (Full Screen Cyber Look) ----------
+BANNER = f"""
+{BL}{M}╔══════════════════════════════════════════════════════════════════════════════════════════════════════════╗{W}
+{BL}{M}║                                                                                                          ║{W}
+{BL}{M}║        {C}██████╗██╗   ██╗██████╗ ███████╗██████╗     ██╗    ██╗██╗████████╗██╗  ██╗{W}                 {BL}{M}║{W}
+{BL}{M}║        {C}██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗    ██║    ██║██║╚══██╔══╝██║  ██║{W}                 {BL}{M}║{W}
+{BL}{M}║        {C}██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝    ██║ █╗ ██║██║   ██║   ███████║{W}                 {BL}{M}║{W}
+{BL}{M}║        {C}██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗    ██║███╗██║██║   ██║   ██╔══██║{W}                 {BL}{M}║{W}
+{BL}{M}║        {C}╚██████╗   ██║   ██████╔╝███████╗██║  ██║    ╚███╔███╔╝██║   ██║   ██║  ██║{W}                 {BL}{M}║{W}
+{BL}{M}║         {C}╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝     ╚══╝╚══╝ ╚═╝   ╚═╝   ╚═╝  ╚═╝{W}                 {BL}{M}║{W}
+{BL}{M}║                                                                                                          ║{W}
+{BL}{M}║   ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐   ║{W}
+{BL}{M}║   │  {BL}{Y}🔥 NUM-OSINT PREMIUM ENGINE  │  {G}v10.0.0  │  {C}ZERO PROMPT  │  {M}ONE CLICK RECON{W}{BL}{M}  │   ║{W}
+{BL}{M}║   │  {W}🛡️  AUTHOR: CYBER WITH RANJAN  │  {G}🔒 AUTO-INJECT  │  {Y}⚡ BUG FREE{W}{BL}{M}  │   ║{W}
+{BL}{M}║   └──────────────────────────────────────────────────────────────────────────────────────────────────┘   ║{W}
+{BL}{M}║                                                                                                          ║{W}
+{BL}{R}║   ⚠️  DISCLAIMER: FOR AUTHORIZED SECURITY RESEARCH & BUG BOUNTY ONLY.                                 ║{W}
+{BL}{R}║   🚫  UNAUTHORIZED PII EXTRACTION IS PUNISHABLE UNDER IT ACT 2000.                                   ║{W}
+{BL}{M}║                                                                                                          ║{W}
+{BL}{M}╚══════════════════════════════════════════════════════════════════════════════════════════════════════════╝{W}
+"""
+
+# ---------- SYSTEM FUNCTIONS ----------
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def loading_animation(seconds=1.2):
+    chars = ['|', '/', '-', '\\']
+    end_time = time.time() + seconds
+    i = 0
+    while time.time() < end_time:
+        sys.stdout.write(f'\r    {C}[{chars[i % 4]}] Establishing secure channel...{W}')
+        sys.stdout.flush()
+        time.sleep(0.1)
+        i += 1
+    sys.stdout.write('\r    [✓] Connection established successfully.         \n')
+
+# ---------- CORE FETCH ENGINE (Handles EVERY possible error) ----------
+def fetch_data(api_config, target_id):
+    headers = {'User-Agent': 'CYBER-WITH-RANJAN-OSINT/v10.0'}
+    params = api_config.get("params", {}).copy()
+    params[api_config["id_key"]] = target_id
+    url = api_config["url"]
+    
+    print(f"\n    {D}[+] Target URL : {url}{W}")
+    print(f"    {D}[+] Parameters : {params}{W}")
+    loading_animation(1.0)
+
+    try:
+        response = requests.get(url, headers=headers, params=params, timeout=15)
+        try:
+            raw_data = response.json()
+        except json.JSONDecodeError:
+            return {
+                "status": "ERROR",
+                "message": f"Server returned non-JSON response (HTTP {response.status_code})."
+            }
+        if response.status_code == 200:
+            if isinstance(raw_data, dict) and raw_data.get('error'):
+                return {"status": "FAILED", "code": response.status_code, "message": f"API Error: {raw_data['error']}", "raw": raw_data}
+            return {"status": "SUCCESS", "data": raw_data}
+        else:
+            error_msg = raw_data.get('message') or raw_data.get('error') or raw_data.get('detail') or f"HTTP {response.status_code}"
+            return {"status": "FAILED", "code": response.status_code, "message": error_msg, "raw": raw_data}
+    except requests.exceptions.Timeout:
+        return {"status": "ERROR", "message": "Connection Timeout! Server is slow."}
+    except requests.exceptions.ConnectionError:
+        return {"status": "ERROR", "message": "Network Error! Check VPN/Proxy."}
+    except Exception as e:
+        return {"status": "ERROR", "message": f"Critical Error: {str(e)}"}
+
+# ---------- SMART DATA DISPLAY ----------
+def display_result(result):
+    print(f"{G}┌──────────────[ EXTRACTION REPORT ]────────────────────────────────────────────┐{W}")
+    if result['status'] == 'SUCCESS':
+        data = result['data']
+        if isinstance(data, dict):
+            main_data = data
+            for key in ['data', 'result', 'response', 'info', 'details', 'vehicle', 'aadhar', 'mobile']:
+                if key in data and isinstance(data[key], (dict, list)):
+                    main_data = data[key]
+                    break
+            print(f"    {G}✅ STATUS   : SUCCESS (Data Retrieved){W}")
+            print(f"    {C}📦 PAYLOAD  :{W}\n")
+            if isinstance(main_data, dict):
+                for k, v in main_data.items():
+                    if isinstance(v, (str, int, float, bool)):
+                        print(f"        {Y}{k}{W} : {G}{v}{W}")
+                    elif isinstance(v, list):
+                        print(f"        {Y}{k}{W} : {C}[{len(v)} items]{W}")
+                    elif isinstance(v, dict):
+                        print(f"        {Y}{k}{W} : {C}{{{len(v)} nested keys}}{W}")
+                    else:
+                        print(f"        {Y}{k}{W} : {v}")
+            else:
+                print(f"        {C}{json.dumps(main_data, indent=4)}{W}")
+        else:
+            print(f"    {G}✅ STATUS   : SUCCESS{W}")
+            print(f"    {C}📦 RESPONSE :{W}\n{json.dumps(data, indent=4)}")
+    else:
+        print(f"    {R}❌ STATUS   : {result['status']}{W}")
+        print(f"    {R}🛑 MESSAGE  : {result.get('message', 'Unknown failure')}{W}")
+        if result.get('code'):
+            print(f"    {R}🔢 HTTP CODE: {result['code']}{W}")
+        if result.get('raw'):
+            print(f"    {R}📄 RAW RESP : {json.dumps(result['raw'])}{W}")
+
+    print(f"    {D}───────────── FULL RAW JSON (DEBUG) ──────────────────────────────────────{W}")
+    if result.get('data'):
+        print(f"{BL}{Y}{json.dumps(result['data'], indent=4, sort_keys=True)}{W}")
+    elif result.get('raw'):
+        print(f"{BL}{Y}{json.dumps(result['raw'], indent=4, sort_keys=True)}{W}")
+    else:
+        print(f"{Y}    {{ No JSON payload received }}{W}")
+    print(f"    {D}───────────────────────────────────────────────────────────────────────────────{W}")
+
+# ---------- MODULE HANDLER ----------
+def module_handler(module_name, config):
+    clear_screen()
+    print(BANNER)
+    print(f"{D}    ⏱️  Session Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  │  Module: {BL}{Y}{module_name.upper()}{W}{D}  │  {G}🔑 Auto-Key Engine Active{W}")
+    print("    " + "═" * 100 + "\n")
+    print(f"{C}┌──────────────[ {module_name.upper()} RECONNAISSANCE ]────────────────────────────────────────┐{W}")
+    
+    if module_name == "aadhaar":
+        target = input(f"    {Y}▶ Enter 12-digit Aadhaar Number {W}(e.g., 962397300673): ")
+    elif module_name == "mobile":
+        target = input(f"    {Y}▶ Enter 10-digit Mobile Number {W}(e.g., 9876543210): ")
+    else:
+        target = input(f"    {Y}▶ Enter Vehicle Registration Number {W}(e.g., RJ14CV0002): ")
+    print(f"{C}└────────────────────────────────────────────────────────────────────────────────────────────┘{W}\n")
+
+    result = fetch_data(config, target)
+    display_result(result)
+    
+    if result['status'] == 'SUCCESS':
+        save_opt = input(f"\n    {Y}[?] Do you want to save this data as a JSON file? (y/n): {W}")
+        if save_opt.lower() == 'y':
+            fname = f"{module_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            with open(fname, "w") as f:
+                json.dump(result['data'], f, indent=4)
+            print(f"    {G}[✓] File successfully saved as: {fname}{W}")
+    else:
+        print(f"\n    {Y}[!] Data retrieval failed. Skipping save.{W}")
+    input(f"\n    {D}[Press ENTER to return to the main menu...]{W}")
+
+# ---------- MAIN MENU ----------
+def main_menu():
+    while True:
+        clear_screen()
+        print(BANNER)
+        print(f"{BL}{C}    ┌────────────────────[ MAIN CONTROLLER DASHBOARD ]──────────────────────────────────────┐{W}")
+        print(f"    │  {BL}{G} 1.{W}  📇  {C}AADHAAR LOOKUP{W}  (🔑 Auto-Key)    │  {BL}{G} 2.{W}  📱  {C}MOBILE LOOKUP{W}  (🔑 Auto-Key)      │")
+        print(f"    │  {BL}{G} 3.{W}  🚗  {C}VEHICLE LOOKUP{W}  (🚫 No-Key)      │  {BL}{R} 0.{W}  🛑  {R}EXIT / SHUTDOWN{W}                           │")
+        print(f"    └────────────────────────────────────────────────────────────────────────────────────────────┘")
+        choice = input(f"\n    {Y}╰─> Select Option (0-3): {W}")
+        if choice == '1':
+            module_handler("aadhaar", API_CONFIG['aadhaar'])
+        elif choice == '2':
+            module_handler("mobile", API_CONFIG['mobile'])
+        elif choice == '3':
+            module_handler("vehicle", API_CONFIG['vehicle'])
+        elif choice == '0':
+            print(f"\n    {R}🔥 Session terminated. Stay Ethical, Cyber With Ranjan!{W}\n")
+            sys.exit(0)
+        else:
+            print(f"\n    {R}[!] Invalid option. Select 0, 1, 2, or 3.{W}")
+            time.sleep(1.5)
+
+if __name__ == "__main__":
+    try:
+        main_menu()
+    except KeyboardInterrupt:
+        print(f"\n\n    {R}[!] Interrupted by user. Over & Out.{W}\n")
+        sys.exit(0)
